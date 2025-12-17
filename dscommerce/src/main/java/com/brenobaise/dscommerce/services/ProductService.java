@@ -1,6 +1,7 @@
     package com.brenobaise.dscommerce.services;
 
     import com.brenobaise.dscommerce.dtos.ProductDTO;
+    import com.brenobaise.dscommerce.dtos.ProductMinDTO;
     import com.brenobaise.dscommerce.entities.Product;
     import com.brenobaise.dscommerce.repositories.ProductRepository;
     import com.brenobaise.dscommerce.services.exceptions.DatabaseException;
@@ -17,6 +18,7 @@
     import org.springframework.transaction.annotation.Transactional;
 
     import org.springframework.data.domain.Pageable;
+    import org.springframework.web.bind.annotation.RequestParam;
 
 
     import java.util.Optional;
@@ -39,11 +41,11 @@
         }
 
         @Transactional(readOnly = true)
-        public Page<ProductDTO> findAll(String name, Pageable pageable){
+        public Page<ProductMinDTO> findAll(String name, Pageable pageable){
             Page<Product> result = productRepository.searchByName(name, pageable);
-            return result.map(p -> modelMapper.map(p, ProductDTO.class));
-
+            return result.map(ProductMinDTO::new);
         }
+
 
         @Transactional
         public ProductDTO insert(ProductDTO dto){
