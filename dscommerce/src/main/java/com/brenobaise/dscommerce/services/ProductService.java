@@ -1,8 +1,11 @@
     package com.brenobaise.dscommerce.services;
 
+    import com.brenobaise.dscommerce.dtos.CategoryDTO;
     import com.brenobaise.dscommerce.dtos.ProductDTO;
     import com.brenobaise.dscommerce.dtos.ProductMinDTO;
+    import com.brenobaise.dscommerce.entities.Category;
     import com.brenobaise.dscommerce.entities.Product;
+    import com.brenobaise.dscommerce.repositories.CategoryRepository;
     import com.brenobaise.dscommerce.repositories.ProductRepository;
     import com.brenobaise.dscommerce.services.exceptions.DatabaseException;
     import com.brenobaise.dscommerce.services.exceptions.ResourceNotFoundException;
@@ -21,13 +24,18 @@
     import org.springframework.web.bind.annotation.RequestParam;
 
 
+    import java.util.HashSet;
+    import java.util.List;
     import java.util.Optional;
+    import java.util.Set;
 
     @Service
     public class ProductService {
 
         @Autowired
         private ProductRepository productRepository;
+        @Autowired
+        private CategoryRepository categoryRepository;
 
         @Autowired
         private ModelMapper modelMapper;
@@ -48,25 +56,57 @@
 
 
         @Transactional
-        public ProductDTO insert(ProductDTO dto){
-                Product product = modelMapper.map(dto, Product.class);
+        public ProductDTO insert(ProductDTO dto) {
 
-                product = productRepository.save(product);
-                return modelMapper.map(product, ProductDTO.class);
+            Product product = modelMapper.map(dto, Product.class);
+
+            List<Long> categoryIds = dto.getCategories()
+                    .stream()
+                    .map(CategoryDTO::getId)
+                    .toList();
+
+            Set<Category> categories = new HashSet<>(
+                    categoryRepository.findAllById(categoryIds)
+            );
+
+            product.setCategories(categories);
 
 
+            product.setCategories(categories);
+
+            product = productRepository.save(product);
+
+            return new ProductDTO(product);
         }
+
 
         @Transactional
         public ProductDTO update(Long id, ProductDTO dto) {
+
             Product entity = productRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("Entity not found: id " + id));
 
             modelMapper.map(dto, entity);
 
+            List<Long> categoryIds = dto.getCategories()
+                    .stream()
+                    .map(CategoryDTO::getId)
+                    .toList();
+
+            Set<Category> categories = new HashSet<>(
+                    categoryRepository.findAllById(categoryIds)
+            );
+
+            entity.setCategories(categories);
+
+
+            entity.setCategories(categories);
+
             Product saved = productRepository.save(entity);
-            return modelMapper.map(saved, ProductDTO.class);
+
+            return new ProductDTO(saved);
         }
+
 
 
         @Transactional(propagation = Propagation.SUPPORTS)

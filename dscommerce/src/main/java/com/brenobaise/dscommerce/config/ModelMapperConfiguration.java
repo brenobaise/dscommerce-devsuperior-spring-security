@@ -19,7 +19,10 @@ public class ModelMapperConfiguration {
 
         // Tells modelmapper to not copy the ID of the classes.
         modelMapper.typeMap(ProductDTO.class, Product.class)
-                .addMappings(m -> m.skip(Product::setId));
+                .addMappings(m -> {
+                    m.skip(Product::setId);
+                    m.skip(Product::setCategories);
+                });
 
         return modelMapper;
     }
