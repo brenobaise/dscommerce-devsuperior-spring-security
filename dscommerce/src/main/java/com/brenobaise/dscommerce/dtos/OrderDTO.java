@@ -3,15 +3,18 @@ package com.brenobaise.dscommerce.dtos;
 import com.brenobaise.dscommerce.entities.Order;
 import com.brenobaise.dscommerce.entities.OrderItem;
 import com.brenobaise.dscommerce.entities.OrderStatus;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderDTO {
@@ -22,6 +25,7 @@ public class OrderDTO {
     private ClientDTO client;
     private PaymentDTO payment;
 
+    @NotEmpty(message = "Must have at least one item")
     private List<OrderItemDTO> items = new ArrayList<>();
 
     public OrderDTO(Order entity) {
