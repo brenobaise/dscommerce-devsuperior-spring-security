@@ -3,6 +3,7 @@ package com.brenobaise.dscommerce.controllers.handlers;
 import com.brenobaise.dscommerce.dtos.CustomError;
 import com.brenobaise.dscommerce.dtos.ValidationError;
 import com.brenobaise.dscommerce.services.exceptions.DatabaseException;
+import com.brenobaise.dscommerce.services.exceptions.ForbiddenException;
 import com.brenobaise.dscommerce.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -44,6 +45,13 @@ public class ControllerExceptionHandler {
             err.addError(f.getField(), f.getDefaultMessage());
         }
 
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<CustomError> forbiddenExceptionHandler(ForbiddenException ex, HttpServletRequest request){
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        CustomError err = new CustomError(Instant.now(), status.value(), ex.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
 
