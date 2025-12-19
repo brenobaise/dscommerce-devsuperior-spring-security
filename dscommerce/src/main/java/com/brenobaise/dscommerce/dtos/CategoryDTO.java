@@ -17,4 +17,5 @@ public class CategoryDTO {
         id = entity.getId();
         name = entity.getName();
     }
+
 }
