@@ -6,14 +6,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +28,10 @@ public class ProductDTO {
     private String name;
     @NotBlank @Size(min = 10, message = "Must have minimum 10 characters.")
     private String description;
-    @Positive(message = "Price must be positive")
+    @Positive(message = "Price must be positive") @NotNull
     private Double price;
     private String imgUrl;
-    @NotEmpty
+    @NotEmpty(message = "Must have at least one category")
     private List<CategoryDTO> categories = new ArrayList<>();
 
     public ProductDTO(Product entity){
